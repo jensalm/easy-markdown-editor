@@ -749,7 +749,7 @@ function drawImageWithUrl(editor, url) {
     var endPoint = cm.getCursor('end');
     endPoint.ch += url.length;
     cm.setSelection(startPoint, endPoint);
-    console.log(startPoint + ' ' + endPoint);
+    // console.log(startPoint + ' ' + endPoint);
     cm.focus();
 }
 
@@ -1495,8 +1495,6 @@ var errorMessages = {
  * Interface of EasyMDE.
  */
 function EasyMDE(options) {
-
-    console.log('options', options);
 
     // Handle options parameter
     options = options || {};
