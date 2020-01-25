@@ -735,6 +735,25 @@ function afterImageUploaded(editor, url) {
 }
 
 /**
+ * Action to insert draw an image tag and fill it with a url determined by the called
+ * @param editor {EasyMDE} The EasyMDE object
+ * @param url {string} The url of the image
+ */
+function drawImageWithUrl(editor, url) {
+    var cm = editor.codemirror;
+    var stat = getState(cm);
+    var options = editor.options;
+    _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+    var startPoint = cm.getCursor('start');
+    startPoint.ch += url.length;
+    var endPoint = cm.getCursor('end');
+    endPoint.ch += url.length;
+    cm.setSelection(startPoint, endPoint);
+    console.log(startPoint + ' ' + endPoint);
+    cm.focus();
+}
+
+/**
  * Action for drawing a table.
  */
 function drawTable(editor) {
@@ -1476,6 +1495,9 @@ var errorMessages = {
  * Interface of EasyMDE.
  */
 function EasyMDE(options) {
+
+    console.log('options', options);
+
     // Handle options parameter
     options = options || {};
 
@@ -1676,7 +1698,7 @@ function EasyMDE(options) {
  */
 EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
     if (files.length === 0) {
-      return;
+        return;
     }
     var names = [];
     for (var i = 0; i < files.length; i++) {
@@ -1698,7 +1720,7 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
  */
 EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunction, files) {
     if (files.length === 0) {
-      return;
+        return;
     }
     var names = [];
     for (var i = 0; i < files.length; i++) {
@@ -2003,9 +2025,9 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         if (self.options.imageUploadFunction) {
-          self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
+            self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
         } else {
-          self.uploadImages(event.target.files, onSuccess, onError);
+            self.uploadImages(event.target.files, onSuccess, onError);
         }
         imageInput.removeEventListener('change', onChange);
     }
@@ -2112,8 +2134,9 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
  * @param imageUploadFunction {Function} The custom function to upload the image passed in options
  * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File).
  */
-EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction, file) {
+EasyMDE.prototype.uploadImageUsingCustomFunction = function (imageUploadFunction, file) {
     var self = this;
+
     function onSuccess(imageUrl) {
         afterImageUploaded(self, imageUrl);
     }
@@ -2597,5 +2620,10 @@ EasyMDE.prototype.toTextArea = function () {
         this.clearAutosavedValue();
     }
 };
+
+EasyMDE.prototype.drawImageWithUrl = function (url) {
+    drawImageWithUrl(this, url);
+};
+
 
 module.exports = EasyMDE;
